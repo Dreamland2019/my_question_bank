@@ -593,6 +593,9 @@
                 });
             }
             
+            // 更新答案解析内容 - 这是修复的关键部分
+            explanationContent.textContent = question.explanation;
+            
             // 更新书签状态
             updateBookmarkButton();
             
