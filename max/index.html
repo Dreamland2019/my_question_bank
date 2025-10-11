@@ -339,6 +339,20 @@
             .stat-item {
                 flex: 1 0 45%;
             }
+
+            /* 清除缓存按钮样式 */
+            .clear-cache-btn {
+                background-color: var(--warning-color);
+                color: white;
+            }
+
+            /* 横线分隔样式 */
+            .section-divider {
+                height: 1px;
+                background-color: #e0e0e0;
+                margin: 20px 0;
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -357,6 +371,9 @@
             <button class="mode-btn random-btn" id="randomBtn">
                 <i>🎲</i> 随机刷题
             </button>
+            <button class="mode-btn clear-cache-btn" id="clearCacheBtn">
+                <i>🗑️</i> 清除缓存
+            </button>
         </div>
         
         <div class="card question-container" id="questionContainer">
@@ -369,7 +386,7 @@
             </div>
             
             <div class="question-text" id="questionText">
-                当人类迈入21的时候，英国ＢＢＣ广播公司在全球范围内举行过一次"千年思想家"网上评选。位列榜首的是
+                当人类迈入21世纪的时候，英国ＢＢＣ广播公司在全球范围内举行过一次"千年思想家"网上评选。位列榜首的是
             </div>
             
             <div class="options-container" id="optionsContainer">
@@ -388,7 +405,7 @@
                     <span>▼</span>
                 </div>
                 <div class="explanation-content" id="explanationContent">
-                    当人类迈入21的时候，英国ＢＢＣ广播公司在全球范围内举行过一次"千年思想家"网上评选。结果马克思位列榜首，名列第二、第三和第四的是相对论的创立者爱因斯坦、万有引力的发现者牛顿和进化论的提出者达尔文。
+                    当人类迈入21世纪的时候，英国ＢＢＣ广播公司在全球范围内举行过一次"千年思想家"网上评选。结果马克思位列榜首，名列第二、第三和第四的是相对论的创立者爱因斯坦、万有引力的发现者牛顿和进化论的提出者达尔文。
                 </div>
             </div>
             
@@ -410,6 +427,9 @@
                     <div class="stat-label">用时</div>
                 </div>
             </div>
+            
+            <!-- 新增横线分隔 -->
+            <div class="section-divider"></div>
             
             <div class="chapter-selector" id="chapterSelector" style="display: none;">
                 <select id="chapterSelect">
@@ -478,10 +498,32 @@
             explanationToggle.addEventListener('click', toggleExplanation);
             chapterSelect.addEventListener('change', changeChapter);
             bookmarkBtn.addEventListener('click', toggleBookmark);
+            clearCacheBtn.addEventListener('click', clearCache);
             
             // 初始化统计信息
             loadStats();
         });
+
+        function clearCache() {
+            if (confirm('确定要清除所有缓存数据吗？这将重置您的答题统计、书签和计时信息。')) {
+                // 清除localStorage中的所有数据
+                localStorage.removeItem('stats');
+                localStorage.removeItem('bookmarks');
+                
+                // 重置内存中的变量
+                bookmarks = [];
+                
+                // 重置统计显示
+                const stats = {
+                    correct: 0,
+                    incorrect: 0,
+                    total: 0
+                };
+                displayStats(stats);
+                
+                alert('缓存已清除！');
+            }
+        }
         
         // 开始练习
         function startPractice(mode) {
