@@ -197,7 +197,28 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 20px;
+            flex-direction: row; /* 确保水平排列 */
+            gap: 10px; /* 添加按钮间距 */
         }
+
+        /* 调整按钮宽度，使其适合水平布局 */
+        .actions .btn {
+            flex: 1; /* 让按钮平均分配宽度 */
+            white-space: nowrap; /* 防止按钮文字换行 */
+        }
+
+        /* 针对移动端的响应式调整 */
+        @media (max-width: 768px) {
+            .actions {
+                    flex-direction: row; /* 保持水平排列 */
+                    gap: 8px; /* 调整间距 */
+                }
+                
+                .actions .btn {
+                    padding: 10px 12px; /* 调整内边距以适应小屏幕 */
+                    font-size: 0.9rem; /* 调整字体大小 */
+                }
+            }
         
         .btn {
             padding: 10px 20px;
