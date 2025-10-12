@@ -206,38 +206,6 @@
             flex: 1; /* 让按钮平均分配宽度 */
             white-space: nowrap; /* 防止按钮文字换行 */
         }
-
-        /* 针对移动端的响应式调整 */
-        @media (max-width: 768px) {
-            .actions {
-                display: block; /* 改为块级布局 */
-            }
-            
-            .actions .btn {
-                display: block;
-                width: 100%;
-                margin-bottom: 10px;
-                padding: 12px 15px;
-                font-size: 1rem;
-            }
-            
-            /* 创建两行布局 */
-            .actions .btn:nth-child(2) {
-                order: -1; /* 将提交答案按钮移到第一行 */
-            }
-            
-            /* 创建第二行水平排列 */
-            .actions .btn:nth-child(1),
-            .actions .btn:nth-child(3) {
-                display: inline-block;
-                width: calc(50% - 5px);
-                margin-bottom: 0;
-            }
-            
-            .actions .btn:nth-child(1) {
-                margin-right: 10px;
-            }
-        }
         
         .btn {
             padding: 10px 20px;
@@ -377,6 +345,35 @@
         }
         
         @media (max-width: 768px) {
+            .actions {
+                display: block; /* 改为块级布局 */
+            }
+            
+            .actions .btn {
+                display: block;
+                width: 100%;
+                margin-bottom: 10px;
+                padding: 12px 15px;
+                font-size: 1rem;
+            }
+            
+            /* 创建两行布局 */
+            .actions .btn:nth-child(2) {
+                order: -1; /* 将提交答案按钮移到第一行 */
+            }
+            
+            /* 创建第二行水平排列 */
+            .actions .btn:nth-child(1),
+            .actions .btn:nth-child(3) {
+                display: inline-block;
+                width: calc(50% - 5px);
+                margin-bottom: 0;
+            }
+            
+            .actions .btn:nth-child(1) {
+                margin-right: 10px;
+            }
+            
             .container {
                 padding: 10px;
             }
