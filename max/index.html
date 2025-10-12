@@ -62,13 +62,16 @@
         }
         
         .mode-selection {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 15px !important;
         }
         
         .mode-btn {
-            padding: 15px 25px;
+            padding: 15px 25px !important;
+            box-sizing: border-box !important;
+            padding: 15px 25px !important;
+            margin: 0 !important;
             border: none;
             border-radius: 8px;
             font-size: 1.1rem;
@@ -606,6 +609,17 @@
             
             // 保存统计信息
             saveStats();
+            
+            // 强制浏览器重新计算布局 - 解决按钮样式问题
+            setTimeout(() => {
+                // 触发重排
+                modeSelection.style.display = 'none';
+                modeSelection.offsetHeight; // 触发重排
+                modeSelection.style.display = 'block';
+                
+                // 或者使用更直接的方法重置flex布局
+                // modeSelection.style.flexDirection = 'column';
+            }, 10);
         }
         
         // 显示题目
