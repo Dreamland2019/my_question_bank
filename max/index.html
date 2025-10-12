@@ -65,7 +65,7 @@
             display: none !important;
         }
         
-        .mode-selection {
+        #homePage .mode-selection {
             display: flex !important;
             flex-direction: column !important;
             gap: 15px !important;
@@ -86,6 +86,12 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+        }
+
+        #homePage, #quizPage {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
         }
         
         .sequential-btn {
@@ -383,83 +389,94 @@
 </head>
 <body>
     <div class="container">
-        <header>
-            <button class="home-btn" id="homeBtn">←</button>
-            <h1>HQU马原题库刷题系统</h1>
-            <p>共 <span id="totalQuestions">766</span> 道题目，最后更新2025-10-10</p>
-        </header>
-        
-        <div class="card mode-selection" id="modeSelection">
-            <button class="mode-btn sequential-btn" id="sequentialBtn">
-                <i>📚</i> 顺序刷题
-            </button>
-            <button class="mode-btn random-btn" id="randomBtn">
-                <i>🎲</i> 随机刷题
-            </button>
-            <button class="mode-btn clear-cache-btn" id="clearCacheBtn">
-                <i>🗑️</i> 清除缓存
-            </button>
+        <div id="homePage">
+            <header>
+                <h1>HQU马原题库刷题系统</h1>
+                <p>共 <span id="totalQuestions">766</span> 道题目，最后更新2025-10-10</p>
+            </header>
+            
+            <div class="card mode-selection" id="modeSelection">
+                <button class="mode-btn sequential-btn" id="sequentialBtn">
+                    <i>📚</i> 顺序刷题
+                </button>
+                <button class="mode-btn random-btn" id="randomBtn">
+                    <i>🎲</i> 随机刷题
+                </button>
+                <button class="mode-btn clear-cache-btn" id="clearCacheBtn">
+                    <i>🗑️</i> 清除缓存
+                </button>
+            </div>
         </div>
+
+        <!-- 刷题页面内容 -->
+        <div id="quizPage" style="display: none;">
+            <header>
+                <button class="home-btn" id="homeBtn">←</button>
+                <h1>马克思主义原理题库刷题系统</h1>
+                <p>共 <span id="totalQuestions2">766</span> 道题目，助您高效备考</p>
+            </header>
         
-        <div class="card question-container" id="questionContainer">
-            <div class="question-header">
-                <div>
-                    <span class="question-type" id="questionType">单选题</span>
-                    <span class="question-progress" id="questionProgress">第1章，第1/20题</span>
+        
+            <div class="card question-container" id="questionContainer">
+                <div class="question-header">
+                    <div>
+                        <span class="question-type" id="questionType">单选题</span>
+                        <span class="question-progress" id="questionProgress">第1章，第1/20题</span>
+                    </div>
+                    <button class="bookmark-btn" id="bookmarkBtn">☆</button>
                 </div>
-                <button class="bookmark-btn" id="bookmarkBtn">☆</button>
-            </div>
-            
-            <div class="question-text" id="questionText">
-                当人类迈入21世纪的时候，英国ＢＢＣ广播公司在全球范围内举行过一次"千年思想家"网上评选。位列榜首的是
-            </div>
-            
-            <div class="options-container" id="optionsContainer">
-                <!-- 选项会动态生成 -->
-            </div>
-            
-            <div class="actions">
-                <button class="btn btn-secondary" id="prevBtn">上一题</button>
-                <button class="btn btn-primary" id="submitBtn">提交答案</button>
-                <button class="btn btn-primary" id="nextBtn" disabled>下一题</button>
-            </div>
-            
-            <div class="explanation-container">
-                <div class="explanation-header" id="explanationToggle">
-                    <h3>答案解析</h3>
-                    <span>▼</span>
+                
+                <div class="question-text" id="questionText">
+                    当人类迈入21世纪的时候，英国ＢＢＣ广播公司在全球范围内举行过一次"千年思想家"网上评选。位列榜首的是
                 </div>
-                <div class="explanation-content" id="explanationContent">
-                    当人类迈入21世纪的时候，英国ＢＢＣ广播公司在全球范围内举行过一次"千年思想家"网上评选。结果马克思位列榜首，名列第二、第三和第四的是相对论的创立者爱因斯坦、万有引力的发现者牛顿和进化论的提出者达尔文。
+                
+                <div class="options-container" id="optionsContainer">
+                    <!-- 选项会动态生成 -->
                 </div>
-            </div>
-            
-            <div class="stats-container">
-                <div class="stat-item">
-                    <div class="stat-value" id="correctCount">0</div>
-                    <div class="stat-label">答对</div>
+                
+                <div class="actions">
+                    <button class="btn btn-secondary" id="prevBtn">上一题</button>
+                    <button class="btn btn-primary" id="submitBtn">提交答案</button>
+                    <button class="btn btn-primary" id="nextBtn" disabled>下一题</button>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="incorrectCount">0</div>
-                    <div class="stat-label">答错</div>
+                
+                <div class="explanation-container">
+                    <div class="explanation-header" id="explanationToggle">
+                        <h3>答案解析</h3>
+                        <span>▼</span>
+                    </div>
+                    <div class="explanation-content" id="explanationContent">
+                        当人类迈入21世纪的时候，英国ＢＢＣ广播公司在全球范围内举行过一次"千年思想家"网上评选。结果马克思位列榜首，名列第二、第三和第四的是相对论的创立者爱因斯坦、万有引力的发现者牛顿和进化论的提出者达尔文。
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="accuracyRate">0%</div>
-                    <div class="stat-label">正确率</div>
+                
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <div class="stat-value" id="correctCount">0</div>
+                        <div class="stat-label">答对</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="incorrectCount">0</div>
+                        <div class="stat-label">答错</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="accuracyRate">0%</div>
+                        <div class="stat-label">正确率</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="timeSpent">0:00</div>
+                        <div class="stat-label">用时</div>
+                    </div>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-value" id="timeSpent">0:00</div>
-                    <div class="stat-label">用时</div>
+                
+                <div class="chapter-selector" id="chapterSelector" style="display: none;">
+                    <div class="chapter-selector-header">
+                        <h3>章节选择</h3>
+                    </div>
+                    <select id="chapterSelect">
+                        <!-- 章节选项会动态生成 -->
+                    </select>
                 </div>
-            </div>
-            
-            <div class="chapter-selector" id="chapterSelector" style="display: none;">
-                <div class="chapter-selector-header">
-                    <h3>章节选择</h3>
-                </div>
-                <select id="chapterSelect">
-                    <!-- 章节选项会动态生成 -->
-                </select>
             </div>
         </div>
     </div>
@@ -555,10 +572,9 @@
             currentMode = mode;
             userAnswers = [];
             
-            // 使用style.display控制显示/隐藏
-            modeSelection.style.display = 'none';
-            questionContainer.style.display = 'block';
-            homeBtn.style.display = 'block';
+            // 切换到刷题页面
+            document.getElementById('homePage').style.display = 'none';
+            document.getElementById('quizPage').style.display = 'block';
             
             // 根据模式显示章节选择器
             if (mode === 'sequential') {
@@ -604,21 +620,17 @@
         
         // 返回首页
         function goHome() {
-            // 使用style.display控制显示/隐藏
-            modeSelection.style.display = 'block';
-            questionContainer.style.display = 'none';
-            homeBtn.style.display = 'none';
+            // 切换到首页
+            document.getElementById('homePage').style.display = 'block';
+            document.getElementById('quizPage').style.display = 'none';
             
             // 停止计时
             clearInterval(timerInterval);
             
             // 保存统计信息
             saveStats();
-            
-            // 强制重排以修复按钮布局问题
-            void modeSelection.offsetHeight;
         }
-        
+                
         // 显示题目
         function displayQuestion() {
             if (questions.length === 0) return;
