@@ -346,22 +346,28 @@
         
         @media (max-width: 768px) {
             .actions {
-                display: flex;
-                flex-direction: column;
+                display: grid;
+                grid-template-columns: 1fr; /* 单列布局 */
                 gap: 10px;
             }
             
-            /* 创建第二行容器 */
-            .second-row {
-                display: flex;
-                justify-content: space-between;
-                gap: 10px;
+            /* 提交答案按钮在第一行 */
+            #submitBtn {
+                grid-row: 1;
             }
             
-            /* 上一题和下一题按钮平分第二行 */
+            /* 上一题和下一题按钮在第二行，并排显示 */
             #prevBtn,
             #nextBtn {
-                flex: 1;
+                grid-row: 2;
+                display: inline-block;
+                width: calc(50% - 5px);
+                vertical-align: top;
+            }
+            
+            /* 为上一题按钮添加右边距 */
+            #prevBtn {
+                margin-right: 10px;
             }
             
             .container {
