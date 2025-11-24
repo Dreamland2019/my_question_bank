@@ -12,7 +12,7 @@
     <header class="app-header">
         <div class="header-content">
             <button id="back-home-btn" class="hidden">← 返回主页</button>
-            <h1 id="page-title">马原题库</h1>
+            <h1 id="page-title">适用HQU的马原客观题题库</h1>
             <div id="header-controls">
                 <!-- 章节选择器 (仅在顺序练习模式显示) -->
                 <select id="chapter-selector" class="hidden"></select>
@@ -49,6 +49,14 @@
                 </button>
             </div>
         </div>
+
+       <!-- 【新增代码】页脚区域 -->
+        <footer class="app-footer">
+            <p>题库版本：<span id="footer-date">2025-11-21</span></p>
+            <p>作者：<a href="https://github.com/Dreamland2019" target="_blank">幻境沉沦</a></p>
+            <p>实现：自然语言编程即AI写的</p>
+        </footer>
+        <!-- 【新增代码结束】 -->
 
         <!-- 2. 答题视图 -->
         <div id="quiz-view" class="view hidden">
