@@ -185,14 +185,25 @@ function renderQuestion() {
     document.getElementById('current-index').textContent = current;
     document.getElementById('total-count').textContent = total;
     document.getElementById('chapter-tag').textContent = `第 ${q.chapter} 章`;
-    document.getElementById('type-tag').textContent = q.type;
-    
+    // document.getElementById('type-tag').textContent = q.type; // 注释掉或删除这行，不再需要顶部标签
+    document.getElementById('type-tag').style.display = 'none'; // 隐藏顶部的旧标签
+
     // 进度条
     const pct = (current / total) * 100;
     els.progressBar.style.width = `${pct}%`;
 
-    // 题目与选项
-    els.questionText.textContent = `${current}. ${q.question}`; // 可以考虑支持 innerHTML 如果题目有格式
+    // --- 修改开始：更醒目的题型标记 ---
+    // 根据题型设置颜色（多选题用红色，其他用蓝色）
+    let typeLabelHtml = `（${q.type}）`;
+    if (q.type === '多选题') {
+        typeLabelHtml = `<span style="color: #e74c3c; font-weight: bold;">（${q.type}）</span>`;
+    } else {
+        typeLabelHtml = `<span style="color: #3498db; font-weight: bold;">（${q.type}）</span>`;
+    }
+
+    // 使用 innerHTML 将题型和题目拼接在一起
+    els.questionText.innerHTML = `${current}.${typeLabelHtml} ${q.question}`;
+    // --- 修改结束 ---
     
     els.optionsContainer.innerHTML = '';
     Object.entries(q.options).forEach(([key, val]) => {
