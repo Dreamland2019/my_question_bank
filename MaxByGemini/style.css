@@ -82,3 +82,22 @@ body { background-color: var(--bg); color: var(--dark); padding-bottom: 40px; }
 
 /* 错题模式特定 */
 #remove-wrong-btn { background: #fed; border: 1px solid #fbc; color: #c00; padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; cursor: pointer; }
+
+/* 页脚样式 */
+.app-footer {
+    margin-top: 40px;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--gray);
+    line-height: 1.6;
+    padding-bottom: 20px;
+}
+
+.app-footer a {
+    color: var(--primary);
+    text-decoration: none;
+}
+
+.app-footer a:hover {
+    text-decoration: underline;
+}
