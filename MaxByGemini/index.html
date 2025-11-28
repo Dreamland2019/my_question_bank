@@ -11,13 +11,17 @@
     <!-- 顶部导航栏 -->
     <header class="app-header">
         <div class="header-content">
-            <button id="back-home-btn" class="hidden">← 返回主页</button>
-            <h1 id="page-title">适用HQU的马原客观题题库</h1>
+            <button id="back-home-btn" class="hidden">← 返回</button>
+            <!-- 给 h1 加个 id="header-title" -->
+            <h1 id="header-title">适用HQU的马原客观题刷题页面</h1>
             <div id="header-controls">
-                <!-- 章节选择器 (仅在顺序练习模式显示) -->
                 <select id="chapter-selector" class="hidden"></select>
-                <!-- 移除错题按钮 (仅在错题模式显示) -->
-                <button id="remove-wrong-btn" class="hidden">🗑️ 移除此题</button>
+                
+                <!-- 【新增】重点标记按钮 (默认隐藏) -->
+                <button id="star-btn" class="hidden">★ 标记</button>
+                
+                <!-- 移除按钮保持不变 -->
+                <button id="remove-wrong-btn" class="hidden">🗑️ 移除</button>
             </div>
         </div>
     </header>
@@ -42,12 +46,20 @@
                     <span class="text">错题回顾</span>
                     <span class="sub-text" id="wrong-count-badge">0 题待复习</span>
                 </button>
+                
+                <!-- 【新增】重点标记模式入口 -->
+                <button class="menu-btn star-mode" onclick="startPriority()">
+                    <span class="icon">⭐</span>
+                    <span class="text">重点标记</span>
+                    <span class="sub-text" id="priority-count-badge">0 题重点</span>
+                </button>
+
                 <button class="menu-btn danger" onclick="clearCache()">
                     <span class="icon">🧹</span>
                     <span class="text">清除缓存</span>
                     <span class="sub-text">重置所有进度</span>
                 </button>
-            </div>       
+            </div> 
             <!-- 【新增代码】页脚区域 -->
             <footer class="app-footer">
                 <p>题库版本：<span id="footer-date">2025-11-21</span></p>

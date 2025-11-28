@@ -1,13 +1,17 @@
 // 全局状态
 let state = {
-    questions: [],      // 所有题目
-    chapters: {},       // 章节映射
-    mode: 'practice',   // 'practice' | 'review'
-    currentIndex: 0,    // 当前题目在 questions 数组中的索引（顺序模式）
-    reviewQueue: [],    // 错题回顾模式下的题目ID列表
-    reviewIndex: 0,     // 错题回顾模式下的队列索引
-    wrongList: [],      // 存储所有错题ID的数组 (持久化)
-    userAnswers: {},    // 临时存储用户当前题目的选择
+    questions: [],
+    chapters: {},
+    metadata: null,
+    mode: 'practice', 
+    currentIndex: 0,
+    reviewQueue: [],
+    reviewIndex: 0,
+    wrongList: [],
+    // 【新增】重点列表相关
+    priorityList: [], 
+    priorityIndex: 0, 
+    userAnswers: {},
 };
 
 const FILES = {
@@ -17,9 +21,11 @@ const FILES = {
 const STORAGE_KEYS = {
     progress: 'mqb_practice_index',
     wrongList: 'mqb_wrong_list',
-    reviewIndex: 'mqb_review_index'
+    reviewIndex: 'mqb_review_index',
+    // 【新增】重点存储 Key
+    priorityList: 'mqb_priority_list',
+    priorityIndex: 'mqb_priority_index'
 };
-
 // DOM 元素
 const els = {
     views: { home: document.getElementById('home-view'), quiz: document.getElementById('quiz-view') },
@@ -35,7 +41,10 @@ const els = {
     backHomeBtn: document.getElementById('back-home-btn'),
     statsDisplay: document.getElementById('stats-display'),
     removeWrongBtn: document.getElementById('remove-wrong-btn'),
-    wrongCountBadge: document.getElementById('wrong-count-badge')
+    wrongCountBadge: document.getElementById('wrong-count-badge'),
+    headerTitle: document.getElementById('header-title'), // 标题
+    starBtn: document.getElementById('star-btn'),         // 星号按钮
+    priorityCountBadge: document.getElementById('priority-count-badge'), // 首页计数
 };
 
 // 初始化
@@ -67,15 +76,20 @@ function loadStorage() {
     // 加载错题本
     const savedWrongs = localStorage.getItem(STORAGE_KEYS.wrongList);
     if (savedWrongs) state.wrongList = JSON.parse(savedWrongs);
+
+    if (localStorage.getItem(STORAGE_KEYS.priorityList)) {
+    state.priorityList = JSON.parse(localStorage.getItem(STORAGE_KEYS.priorityList));
+    }
 }
 
 function updateHomeStats() {
     const total = state.questions.length;
     const current = state.currentIndex + 1;
-    const wrongCount = state.wrongList.length;
-
-    els.statsDisplay.innerHTML = `当前进度: ${current} / ${total} <br> 累计错题: ${wrongCount}`;
-    els.wrongCountBadge.textContent = `${wrongCount} 题待复习`;
+    // 更新首页统计
+    els.statsDisplay.innerHTML = `当前进度: ${current} / ${total}`;
+    els.wrongCountBadge.textContent = `${state.wrongList.length} 题待复习`;
+    // 【新增】
+    els.priorityCountBadge.textContent = `${state.priorityList.length} 题重点`;
 }
 
 function initChapterSelect() {
@@ -114,6 +128,7 @@ function bindEvents() {
     els.submitBtn.addEventListener('click', submitAnswer);
     els.nextBtn.addEventListener('click', () => navigate(1));
     els.prevBtn.addEventListener('click', () => navigate(-1));
+     els.starBtn.addEventListener('click', togglePriority); // 绑定星号点击
     
     els.chapterSelect.addEventListener('change', (e) => {
         const val = e.target.value;
@@ -136,19 +151,67 @@ function bindEvents() {
         e.target.blur();
     });
 
-    els.removeWrongBtn.addEventListener('click', removeCurrentWrongQuestion);
+    els.removeWrongBtn.onclick = handleRemoveQuestion; 
+}
+
+// 【新增】切换标记状态
+function togglePriority() {
+    const q = getCurrentQuestion();
+    if (!q) return;
+
+    const idx = state.priorityList.indexOf(q.id);
+    if (idx === -1) {
+        // 添加标记
+        state.priorityList.push(q.id);
+        els.starBtn.textContent = "★ 已标记";
+        els.starBtn.classList.add('starred');
+    } else {
+        // 取消标记
+        state.priorityList.splice(idx, 1);
+        els.starBtn.textContent = "☆ 标记";
+        els.starBtn.classList.remove('starred');
+    }
+    // 保存
+    localStorage.setItem(STORAGE_KEYS.priorityList, JSON.stringify(state.priorityList));
 }
 
 // --- 导航逻辑 ---
+function updateHeaderTitle() {
+    if (!els.headerTitle) return; // 防止找不到元素报错
+
+    if (state.mode === 'practice') {
+        els.headerTitle.textContent = "📖 顺序刷题";
+    } else if (state.mode === 'review') {
+        els.headerTitle.textContent = "✍️ 错题回顾";
+    } else if (state.mode === 'priority') {
+        els.headerTitle.textContent = "⭐ 重点标记";
+    } else {
+        // 默认情况
+        els.headerTitle.textContent = "马原题库";
+    }
+}
 
 function showHome() {
+    // 1. 切换视图
     els.views.quiz.classList.add('hidden');
     els.views.quiz.classList.remove('active');
     els.views.home.classList.remove('hidden');
     els.views.home.classList.add('active');
+    
+    // 2. 隐藏导航栏上的按钮
     els.backHomeBtn.classList.add('hidden');
     els.chapterSelect.classList.add('hidden');
     els.removeWrongBtn.classList.add('hidden');
+    if (els.starBtn) els.starBtn.classList.add('hidden'); // 如果你有这个按钮的话
+
+    // 3. 【关键】将标题重置回题库名称
+    // 如果 JSON 里有 metadata.title 就用那个，否则默认显示 "马原题库"
+    const libTitle = (state.metadata && state.metadata.title) ? state.metadata.title : "马原题库";
+    if (els.headerTitle) {
+        els.headerTitle.textContent = libTitle;
+    }
+
+    // 4. 更新统计数据
     updateHomeStats();
 }
 
@@ -156,6 +219,28 @@ function startPractice() {
     state.mode = 'practice';
     enterQuizMode();
     els.chapterSelect.classList.remove('hidden');
+    renderQuestion();
+}
+
+function startPriority() {
+    if (state.priorityList.length === 0) {
+        alert("目前没有标记重点题目。在错题回顾中点击“★”即可添加。");
+        return;
+    }
+    state.mode = 'priority';
+    state.reviewQueue = [...state.priorityList]; // 复用 reviewQueue 队列逻辑
+    
+    // 读取重点进度
+    const savedIndex = parseInt(localStorage.getItem(STORAGE_KEYS.priorityIndex) || 0);
+    if (savedIndex >= state.reviewQueue.length) {
+        state.reviewIndex = 0;
+    } else {
+        state.reviewIndex = savedIndex;
+    }
+
+    enterQuizMode();
+    // 重点模式下，也显示移除按钮（用于移出重点列表）
+    els.removeWrongBtn.classList.remove('hidden'); 
     renderQuestion();
 }
 
@@ -189,13 +274,18 @@ function enterQuizMode() {
     els.views.quiz.classList.remove('hidden');
     els.views.quiz.classList.add('active');
     els.backHomeBtn.classList.remove('hidden');
+
+    // 【关键】这里必须调用一次更新标题！
+    updateHeaderTitle();
 }
 
 function clearCache() {
     if(confirm('确定要清除所有进度和错题记录吗？此操作不可恢复。')) {
         localStorage.removeItem(STORAGE_KEYS.progress);
         localStorage.removeItem(STORAGE_KEYS.wrongList);
-        localStorage.removeItem(STORAGE_KEYS.reviewIndex); // 【新增这一行】
+        localStorage.removeItem(STORAGE_KEYS.reviewIndex);
+        localStorage.removeItem(STORAGE_KEYS.priorityList);
+        localStorage.removeItem(STORAGE_KEYS.priorityIndex);
         location.reload();
     }
 }
@@ -222,7 +312,18 @@ function renderQuestion() {
     els.explanation.classList.add('hidden');
     state.userAnswers = []; // 清空当前选择
     els.removeWrongBtn.disabled = false;
-    els.removeWrongBtn.textContent = "🗑️ 移除此题";
+     if (state.mode === 'priority') {
+        els.removeWrongBtn.textContent = "🗑️ 移出重点";
+        els.starBtn.classList.add('hidden'); // 重点模式下不需要再显示标记按钮（本身就是重点）
+    } else if (state.mode === 'review') {
+        els.removeWrongBtn.textContent = "🗑️ 移除此题";
+        els.starBtn.classList.remove('hidden'); // 错题模式显示标记按钮
+        updateStarBtnState(q.id); // 更新星星状态
+    } else {
+        // 练习模式
+        els.removeWrongBtn.classList.add('hidden');
+        els.starBtn.classList.add('hidden'); 
+    }
 
     // 顶部信息
     const total = state.mode === 'practice' ? state.questions.length : state.reviewQueue.length;
@@ -260,6 +361,16 @@ function renderQuestion() {
         btn.onclick = () => selectOption(key, q.type, btn);
         els.optionsContainer.appendChild(btn);
     });
+}
+
+function updateStarBtnState(qid) {
+    if (state.priorityList.includes(qid)) {
+        els.starBtn.textContent = "★ 已标记";
+        els.starBtn.classList.add('starred');
+    } else {
+        els.starBtn.textContent = "☆ 标记";
+        els.starBtn.classList.remove('starred');
+    }
 }
 
 function selectOption(key, type, btnElement) {
@@ -353,14 +464,21 @@ function navigate(direction) {
             state.reviewIndex = newIndex;
             renderQuestion();
 
-            // 【新增】：保存错题进度
+        if (state.mode === 'review') {
             localStorage.setItem(STORAGE_KEYS.reviewIndex, state.reviewIndex);
-
+        } else if (state.mode === 'priority') {
+            localStorage.setItem(STORAGE_KEYS.priorityIndex, state.reviewIndex);
+        }
+    } else {
+        // 结束
+        if (state.mode === 'priority') {
+            localStorage.setItem(STORAGE_KEYS.priorityIndex, 0);
+            alert('重点回顾结束');
         } else {
-            // 如果刷完了，重置进度为 0，方便下次从头开始
-            localStorage.setItem(STORAGE_KEYS.reviewIndex, 0); 
+            localStorage.setItem(STORAGE_KEYS.reviewIndex, 0);
             alert('错题回顾结束');
-            showHome();
+        }
+        showHome();
         }
     }
 }
@@ -384,51 +502,45 @@ function addToWrongList(id) {
     }
 }
 
-function removeCurrentWrongQuestion() {
+function handleRemoveQuestion() {
     const currentQ = getCurrentQuestion();
     if (!currentQ) return;
 
-    // 从 wrongList 移除
-    state.wrongList = state.wrongList.filter(id => id !== currentQ.id);
-    localStorage.setItem(STORAGE_KEYS.wrongList, JSON.stringify(state.wrongList));
+    if (state.mode === 'review') {
+        // 逻辑A: 从错题本移除
+        state.wrongList = state.wrongList.filter(id => id !== currentQ.id);
+        localStorage.setItem(STORAGE_KEYS.wrongList, JSON.stringify(state.wrongList));
+        
+        // 从当前队列移除并处理索引
+        removeFromQueueAndSave(STORAGE_KEYS.reviewIndex);
 
-    // 从当前回顾队列移除
+    } else if (state.mode === 'priority') {
+        // 逻辑B: 从重点本移除
+        state.priorityList = state.priorityList.filter(id => id !== currentQ.id);
+        localStorage.setItem(STORAGE_KEYS.priorityList, JSON.stringify(state.priorityList));
+        
+        // 从当前队列移除并处理索引
+        removeFromQueueAndSave(STORAGE_KEYS.priorityIndex);
+    }
+    
+    els.removeWrongBtn.textContent = "已移除";
+    els.removeWrongBtn.disabled = true;
+}
+
+// 提取公共的队列移除逻辑
+function removeFromQueueAndSave(storageKeyIndex) {
     state.reviewQueue.splice(state.reviewIndex, 1);
-
-    // --- 修改开始：修正索引并保存 ---
-    // 如果删除的是最后一题，索引需要前移；否则索引不变（因为后面的题顶上来了）
+    
     if (state.reviewIndex >= state.reviewQueue.length) {
         state.reviewIndex = Math.max(0, state.reviewQueue.length - 1);
     }
-    
-    // 保存修正后的索引
-    localStorage.setItem(STORAGE_KEYS.reviewIndex, state.reviewIndex);
-    // --- 修改结束 ---
-    
-    els.removeWrongBtn.textContent = "已移除";
-    els.removeWrongBtn.disabled = true;
+    localStorage.setItem(storageKeyIndex, state.reviewIndex);
 
-    
-    els.removeWrongBtn.textContent = "已移除";
-    els.removeWrongBtn.disabled = true;
-
-    // 如果队列空了，回主页
     if (state.reviewQueue.length === 0) {
+        localStorage.removeItem(storageKeyIndex);
         setTimeout(() => {
-            alert('恭喜！错题已全部消灭。');
+            alert('当前列表已清空！');
             showHome();
         }, 1000);
-    } else {
-        // 否则如果不做操作，用户点下一题会自动跳到新的索引位置
-        // 如果是最后一题被删了，reviewIndex 需要调整吗？
-        // 实际上 render 时是用 index 取 queue，如果当前删了，nextBtn index+1 会跳过一个。
-        // 简单的处理是：删除了当前题，不用自动跳，让用户点下一题（此时下一题已经是原队列的下下题，或者用户手动刷新）
-        // 这里为了体验好，稍微复杂点：当前题删了，reviewIndex不动，但是数据变了，重新渲染这一页（其实是下一题填补上来了）
-        
-        if (state.reviewIndex >= state.reviewQueue.length) {
-            state.reviewIndex = state.reviewQueue.length - 1;
-        }
-        // 稍微延迟一点跳转体验更好
-        // setTimeout(() => renderQuestion(), 500);
     }
 }

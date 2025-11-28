@@ -101,3 +101,35 @@ body { background-color: var(--bg); color: var(--dark); padding-bottom: 40px; }
 .app-footer a:hover {
     text-decoration: underline;
 }
+
+/* 【新增】重点标记模式入口按钮颜色 (紫色系) */
+.menu-btn.star-mode { 
+    background: linear-gradient(135deg, #9b59b6, #8e44ad); 
+}
+
+/* 【新增】顶部导航栏的星号按钮 */
+#star-btn {
+    background: white;
+    border: 1px solid #f1c40f;
+    color: #f1c40f; /* 默认空心或黄色 */
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    margin-right: 5px; /* 和移除按钮隔开一点 */
+    font-weight: bold;
+}
+
+/* 当题目已经被标记时的样式 */
+#star-btn.starred {
+    background: #f1c40f;
+    color: white;
+    border-color: #d35400;
+}
+
+/* 调整 header controls 布局，防止按钮多了挤在一起 */
+#header-controls {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
