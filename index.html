@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人博客 - Stronghold Protocol</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 扫描线背景特效 -->
+    <div class="scanline"></div>
+    <div class="overlay"></div>
+
+    <main class="container">
+        <!-- 第一页：首页 -->
+        <section class="page" id="home">
+            <div class="content-wrapper">
+                <!-- 左侧：个人简介 -->
+                <div class="profile-card">
+                    <div class="avatar-frame">
+                        <img src="avatar.png" alt="头像" class="avatar">
+                    </div>
+                    <h1 class="nickname">你的昵称</h1>
+                    <div class="divider"></div>
+                    <p class="bio">这里是个人的简短介绍。热爱技术，探索未知。RHODES ISLAND / STRONGHOLD PROTOCOL.</p>
+                </div>
+
+                <!-- 右侧：导航卡片 -->
+                <div class="nav-grid">
+                    <div class="nav-card active-card" onclick="scrollToPage(1)">
+                        <div class="card-tag">PROTOCOL 01</div>
+                        <div class="card-title">适用HQU的资源</div>
+                        <div class="card-desc">点击进入资源聚合页</div>
+                    </div>
+                    <div class="nav-card disable">
+                        <div class="card-tag">PROTOCOL 02</div>
+                        <div class="card-title">敬请期待</div>
+                    </div>
+                    <div class="nav-card disable">
+                        <div class="card-tag">PROTOCOL 03</div>
+                        <div class="card-title">敬请期待</div>
+                    </div>
+                    <div class="nav-card disable">
+                        <div class="card-tag">PROTOCOL 04</div>
+                        <div class="card-title">敬请期待</div>
+                    </div>
+                    <div class="nav-card disable">
+                        <div class="card-tag">PROTOCOL 05</div>
+                        <div class="card-title">敬请期待</div>
+                    </div>
+                </div>
+            </div>
+            <div class="scroll-hint">SCROLL DOWN TO EXPLORE [ V ]</div>
+        </section>
+
+        <!-- 第二页：HQU资源页 -->
+        <section class="page" id="hqu-resources">
+            <div class="content-wrapper">
+                <!-- 左侧：资源列表 -->
+                <div class="resource-list">
+                    <div class="resource-item" 
+                         onmouseover="updatePreview('resource1.jpg')"
+                         onclick="window.open('https://inindream.cn/MaxByGemini/', '_blank')">
+                        <span class="item-id">01</span>
+                        <span class="item-name">马原客观题刷题系统</span>
+                    </div>
+                    <div class="resource-item" 
+                         onmouseover="updatePreview('resource2.jpg')"
+                         onclick="window.open('https://docs.qq.com/doc/DUHNVemhsTEJLUkZs', '_blank')">
+                        <span class="item-id">02</span>
+                        <span class="item-name">马原客观题题库</span>
+                    </div>
+                    <div class="resource-item disabled-item" onmouseover="updatePreview('default.jpg')">
+                        <span class="item-id">03</span>
+                        <span class="item-name">敬请期待</span>
+                    </div>
+                    <div class="resource-item disabled-item" onmouseover="updatePreview('default.jpg')">
+                        <span class="item-id">04</span>
+                        <span class="item-name">敬请期待</span>
+                    </div>
+                    <div class="resource-item disabled-item" onmouseover="updatePreview('default.jpg')">
+                        <span class="item-id">05</span>
+                        <span class="item-name">敬请期待</span>
+                    </div>
+                </div>
+
+                <!-- 右侧：预览图 -->
+                <div class="preview-panel">
+                    <div class="preview-frame">
+                        <img id="preview-img" src="default.jpg" alt="预览图">
+                        <div class="frame-corners"></div>
+                    </div>
+                    <div class="preview-info">RESOURCE_PREVIEW_SYSTEM v1.0</div>
+                </div>
+            </div>
+            <div class="back-btn" onclick="scrollToPage(0)">[ 返回首页 ]</div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
